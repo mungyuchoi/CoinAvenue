@@ -1,6 +1,7 @@
 package com.moon.coinavenue.ui.main
 
 import android.content.Context
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -29,7 +30,7 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
                 fragment = AvenueFragment()
             }
             else -> {
-                fragment = PlaceholderFragment.newInstance(position + 1)
+                fragment = PlaceholderFragment.newInstance(position)
             }
         }
         return fragment

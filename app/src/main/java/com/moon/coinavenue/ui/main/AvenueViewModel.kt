@@ -1,8 +1,10 @@
 package com.moon.coinavenue.ui.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.moon.coinavenue.network.AvenueService
+import com.moon.coinavenue.network.model.CandleData
 import com.moon.coinavenue.network.model.MarketCode
 import com.moon.coinavenue.network.repository.AvenueRepo
 import kotlinx.coroutines.*
@@ -17,12 +19,20 @@ class AvenueViewModel : ViewModel() {
 
     private val avenueRepository: AvenueRepo = AvenueRepo(AvenueService.avenueApi)
 
-    val marketLiveData = MutableLiveData<MutableList<MarketCode>>()
+    val marketMutableLiveData = MutableLiveData<MutableList<MarketCode>>()
+    val oneMinuteMutableLiveData = MutableLiveData<MutableList<CandleData>>()
 
     fun getMargetCode() {
         scope.launch {
             val marketCodes = avenueRepository.getMarketCode()
-            marketLiveData.postValue(marketCodes)
+            marketMutableLiveData.postValue(marketCodes)
+        }
+    }
+
+    fun getOneMinuteData(market: String) {
+        scope.launch {
+            val oneMinuteData = avenueRepository.getOneMinuteData(market)
+            oneMinuteMutableLiveData.postValue(oneMinuteData)
         }
     }
 

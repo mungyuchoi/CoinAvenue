@@ -22,7 +22,6 @@ class PlaceholderFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_main, container, false)
         val number = arguments?.getInt(ARG_SECTION_NUMBER)
-        Log.i("MQ!", "number$number")
 
         // 웹뷰 시작
 
@@ -48,7 +47,7 @@ class PlaceholderFragment : Fragment() {
                 webView.loadUrl("https://gall.dcinside.com/board/lists/?id=bitcoins")
             }
             2 -> {
-                webView.loadUrl("https://coinpan.com/")
+                webView.loadUrl("https://cobak.co.kr/")
             }
             3 -> {
                 webView.loadUrl("https://www.ddengle.com/")

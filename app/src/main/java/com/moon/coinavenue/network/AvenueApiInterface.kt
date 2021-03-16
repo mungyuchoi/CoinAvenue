@@ -14,41 +14,41 @@ interface AvenueApiInterface {
     fun getOneMinuteData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<CandleData>
+    ): Deferred<Response<List<CandleData>>>
 
     @GET("candles/minutes/5")
     fun getFiveMinuteData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<CandleData>
+    ): Deferred<Response<List<CandleData>>>
 
     @GET("candles/minutes/10")
     fun getTenMinuteData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<CandleData>
+    ): Deferred<Response<List<CandleData>>>
 
     @GET("candles/minutes/60")
     fun getHourData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<CandleData>
+    ): Deferred<Response<List<CandleData>>>
 
     @GET("candles/days")
     fun getDaysData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<DayData>
+    ): Deferred<Response<List<DayData>>>
 
     @GET("candles/weeks")
     fun getWeeksData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<WeekData>
+    ): Deferred<Response<List<WeekData>>>
 
     @GET("candles/months")
     fun getMonthsData(
         @Query("market") market: String,
         @Query("count") count: Int
-    ): Response<MonthData>
+    ): Deferred<Response<List<MonthData>>>
 }
