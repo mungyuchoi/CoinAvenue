@@ -2,7 +2,7 @@ package com.moon.coinavenue.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CandleData(
+data class CandleUpbitData(
     val market: String,
     @SerializedName("candle_date_time_utc")
     val candleDateTimeUtc: String,
