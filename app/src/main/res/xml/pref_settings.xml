@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="정보">
+        <Preference
+                android:icon="@drawable/ic_web_black_24dp"
+                android:title="문의하기">
+            <intent
+                    android:action="android.intent.action.VIEW"
+                    android:data="https://moonque.tistory.com/entry/%EC%BD%94%EC%9D%B8-%EC%97%90%EB%B9%84%EB%89%B4-QA" />
+        </Preference>
+
+        <Preference
+                android:defaultValue="false"
+                android:icon="@drawable/ic_baseline_info_24"
+                android:key="pref_key_version"
+                android:title="버전 정보" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

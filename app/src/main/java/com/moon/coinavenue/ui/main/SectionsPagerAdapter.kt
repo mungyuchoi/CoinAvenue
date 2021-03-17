@@ -12,6 +12,7 @@ private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,
     R.string.tab_text_2,
     R.string.tab_text_3,
+    R.string.tab_text_4,
 )
 
 /**
@@ -29,6 +30,9 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
             0 -> {
                 fragment = AvenueFragment()
             }
+            4 -> {
+                fragment = SettingsFragment()
+            }
             else -> {
                 fragment = PlaceholderFragment.newInstance(position)
             }
@@ -41,7 +45,7 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     }
 
     override fun getCount(): Int {
-        // Show 4 total pages.
-        return 4
+        // Show 5 total pages.
+        return 5
     }
 }

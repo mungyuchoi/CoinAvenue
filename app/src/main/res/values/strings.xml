@@ -4,4 +4,7 @@
     <string name="tab_text_1">비트코인 갤러리</string>
     <string name="tab_text_2">코박</string>
     <string name="tab_text_3">땡글</string>
+    <string name="tab_text_4">설정</string>
+
+    <string name="pref_key_version" translatable="false">pref_key_version</string>
 </resources>

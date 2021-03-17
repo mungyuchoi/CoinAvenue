@@ -71,7 +71,6 @@ class AvenueFragment : Fragment() {
                 return@observe
             }
             drawChart(list, binding.oneMinutesChart)
-            drawChart(list, binding.fiveMinutesChart)
         })
 
         avenueViewModel.getFiveMinuteData("KRW-BTC")
@@ -80,7 +79,7 @@ class AvenueFragment : Fragment() {
             if (list == null) {
                 return@observe
             }
-//            drawChart(list, binding.fiveMinutesChart)
+            drawChart(list, binding.fiveMinutesChart)
         })
 
     }
