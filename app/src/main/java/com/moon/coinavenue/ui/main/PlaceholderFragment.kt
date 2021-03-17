@@ -1,6 +1,10 @@
 package com.moon.coinavenue.ui.main
 
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,10 +14,25 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.moon.coinavenue.R
+import com.moon.coinavenue.const.Const.Companion.BACK_PRESSED
 
 
 class PlaceholderFragment : Fragment() {
+
+    private lateinit var webView: WebView
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == BACK_PRESSED && userVisibleHint) {
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    activity?.finish()
+                }
+            }
+        }
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(
@@ -26,7 +45,7 @@ class PlaceholderFragment : Fragment() {
         // 웹뷰 시작
 
         // 웹뷰 시작
-        val webView = root.findViewById(R.id.webView) as WebView
+        webView = root.findViewById(R.id.webView) as WebView
         webView.run {
             webViewClient = WebViewClient()
             webView.settings.run {
@@ -53,10 +72,18 @@ class PlaceholderFragment : Fragment() {
                 webView.loadUrl("https://www.ddengle.com/")
             }
         }
-
-
-
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(receiver, IntentFilter(BACK_PRESSED))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver)
     }
 
     companion object {

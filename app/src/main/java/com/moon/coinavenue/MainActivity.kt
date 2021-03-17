@@ -1,5 +1,6 @@
 package com.moon.coinavenue
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -8,6 +9,8 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.moon.coinavenue.const.Const.Companion.BACK_PRESSED
 import com.moon.coinavenue.ui.main.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity() {
@@ -20,5 +23,9 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
+    }
+
+    override fun onBackPressed() {
+        LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(BACK_PRESSED))
     }
 }
