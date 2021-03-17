@@ -50,6 +50,19 @@ class AvenueFragment : Fragment() {
             if (intent.action == Const.BACK_PRESSED && userVisibleHint) {
                 exitDialog?.show()
             }
+            if (intent.action == Const.MARKET_REFRESH) {
+                val market = intent.getStringExtra("market")
+                val name = intent.getStringExtra("name")
+
+                binding.market.text = name
+                avenueViewModel.getOneMinuteData(market)
+                avenueViewModel.getFiveMinuteData(market)
+                avenueViewModel.getHalfHourData(market)
+                avenueViewModel.getHourData(market)
+                avenueViewModel.getDaysData(market)
+                avenueViewModel.getWeeksData(market)
+                avenueViewModel.getMonthsData(market)
+            }
         }
     }
 
@@ -75,8 +88,8 @@ class AvenueFragment : Fragment() {
             activity?.finish()
         }
         //Test
-        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3940256099942544/2247696110")
-//        val adLoader = AdLoader.Builder(this, "ca-app-pub-3578188838033823/8269642538")
+//        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3578188838033823/8269642538")
+        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3578188838033823/8269642538")
             .forUnifiedNativeAd { ad: UnifiedNativeAd ->
                 exitDialog?.findViewById<TemplateView>(R.id.template)?.setNativeAd(ad)
             }
@@ -88,14 +101,19 @@ class AvenueFragment : Fragment() {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
+
+        val intentFilter = IntentFilter().apply {
+            addAction(Const.MARKET_REFRESH)
+            addAction(Const.BACK_PRESSED)
+        }
         LocalBroadcastManager.getInstance(requireContext())
-            .registerReceiver(receiver, IntentFilter(Const.BACK_PRESSED))
+            .registerReceiver(receiver, intentFilter)
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver)
     }
 
@@ -130,7 +148,9 @@ class AvenueFragment : Fragment() {
         avenueViewModel.getMonthsData("KRW-BTC")
 
         avenueViewModel.marketMutableLiveData.observe(viewLifecycleOwner, { list ->
-            binding.recyclerview.adapter = AvenueAdapter(list)
+            binding.recyclerview.adapter = AvenueAdapter(list).apply {
+                setContext(requireContext())
+            }
         })
 
         avenueViewModel.oneMinuteMutableLiveData.observe(viewLifecycleOwner, { list ->

@@ -98,8 +98,8 @@ class PlaceholderFragment : Fragment() {
             activity?.finish()
         }
         //Test
-        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3940256099942544/2247696110")
-//        val adLoader = AdLoader.Builder(this, "ca-app-pub-3578188838033823/8269642538")
+//        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3940256099942544/2247696110")
+        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3578188838033823/8269642538")
             .forUnifiedNativeAd { ad: UnifiedNativeAd ->
                 exitDialog?.findViewById<TemplateView>(R.id.template)?.setNativeAd(ad)
             }

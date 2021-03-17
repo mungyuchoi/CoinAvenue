@@ -23,6 +23,17 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/market"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="비트코인"
+            android:textSize="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerview" />
+
+        <TextView
             android:id="@+id/header_one_minutes"
             android:layout_width="130dp"
             android:layout_height="wrap_content"
@@ -32,7 +43,7 @@
             android:textColor="@android:color/black"
             android:textSize="18dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recyclerview" />
+            app:layout_constraintTop_toBottomOf="@id/market" />
 
         <lecho.lib.hellocharts.view.LineChartView
             android:id="@+id/one_minutes_chart"
