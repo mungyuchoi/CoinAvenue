@@ -1,20 +1,29 @@
 package com.moon.coinavenue.ui.main
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.ads.nativetemplates.TemplateView
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.formats.NativeAdOptions
+import com.google.android.gms.ads.formats.UnifiedNativeAd
 import com.moon.coinavenue.R
 import com.moon.coinavenue.const.Const.Companion.BACK_PRESSED
 
@@ -22,13 +31,15 @@ import com.moon.coinavenue.const.Const.Companion.BACK_PRESSED
 class PlaceholderFragment : Fragment() {
 
     private lateinit var webView: WebView
+    private var exitDialog: Dialog? = null
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == BACK_PRESSED && userVisibleHint) {
                 if (webView.canGoBack()) {
                     webView.goBack()
                 } else {
-                    activity?.finish()
+                    exitDialog?.show()
                 }
             }
         }
@@ -41,8 +52,6 @@ class PlaceholderFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_main, container, false)
         val number = arguments?.getInt(ARG_SECTION_NUMBER)
-
-        // 웹뷰 시작
 
         // 웹뷰 시작
         webView = root.findViewById(R.id.webView) as WebView
@@ -72,6 +81,33 @@ class PlaceholderFragment : Fragment() {
                 webView.loadUrl("https://www.ddengle.com/")
             }
         }
+
+        exitDialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.exit_dialog)
+        }
+        exitDialog?.findViewById<Button>(R.id.review)?.setOnClickListener {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=${requireContext().packageName}")
+                )
+            )
+        }
+        exitDialog?.findViewById<Button>(R.id.exit)?.setOnClickListener {
+            activity?.finish()
+        }
+        //Test
+        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3940256099942544/2247696110")
+//        val adLoader = AdLoader.Builder(this, "ca-app-pub-3578188838033823/8269642538")
+            .forUnifiedNativeAd { ad: UnifiedNativeAd ->
+                exitDialog?.findViewById<TemplateView>(R.id.template)?.setNativeAd(ad)
+            }
+            .withAdListener(object : AdListener() {
+            })
+            .withNativeAdOptions(NativeAdOptions.Builder().build())
+            .build()
+        adLoader.loadAd(AdRequest.Builder().build())
         return root
     }
 

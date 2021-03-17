@@ -1,15 +1,24 @@
 package com.moon.coinavenue.ui.main
 
 import android.R.attr
+import android.app.Dialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.mikephil.charting.charts.CandleStickChart
@@ -18,6 +27,14 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
+import com.google.android.ads.nativetemplates.TemplateView
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.formats.NativeAdOptions
+import com.google.android.gms.ads.formats.UnifiedNativeAd
+import com.moon.coinavenue.R
+import com.moon.coinavenue.const.Const
 import com.moon.coinavenue.databinding.FragmentAvenueBinding
 import com.moon.coinavenue.network.model.CandleUpbitData
 
@@ -28,6 +45,15 @@ class AvenueFragment : Fragment() {
     private val avenueAdapter = AvenueAdapter(arrayListOf())
     private var _binding: FragmentAvenueBinding? = null
     private val binding get() = _binding!!
+    private var exitDialog: Dialog? = null
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Const.BACK_PRESSED && userVisibleHint) {
+                    exitDialog?.show()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +61,44 @@ class AvenueFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAvenueBinding.inflate(inflater, container, false)
+        exitDialog = Dialog(requireContext()).apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.exit_dialog)
+        }
+        exitDialog?.findViewById<Button>(R.id.review)?.setOnClickListener {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=${requireContext().packageName}")
+                )
+            )
+        }
+        exitDialog?.findViewById<Button>(R.id.exit)?.setOnClickListener {
+            activity?.finish()
+        }
+        //Test
+        val adLoader = AdLoader.Builder(requireContext(), "ca-app-pub-3940256099942544/2247696110")
+//        val adLoader = AdLoader.Builder(this, "ca-app-pub-3578188838033823/8269642538")
+            .forUnifiedNativeAd { ad: UnifiedNativeAd ->
+                exitDialog?.findViewById<TemplateView>(R.id.template)?.setNativeAd(ad)
+            }
+            .withAdListener(object : AdListener() {
+            })
+            .withNativeAdOptions(NativeAdOptions.Builder().build())
+            .build()
+        adLoader.loadAd(AdRequest.Builder().build())
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(receiver, IntentFilter(Const.BACK_PRESSED))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver)
     }
 
     override fun onDestroyView() {
