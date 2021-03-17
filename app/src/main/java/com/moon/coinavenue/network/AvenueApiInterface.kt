@@ -22,8 +22,8 @@ interface AvenueApiInterface {
         @Query("count") count: Int
     ): Deferred<Response<List<CandleUpbitData>>>
 
-    @GET("candles/minutes/10")
-    fun getTenMinuteData(
+    @GET("candles/minutes/30")
+    fun getHalfHourData(
         @Query("market") market: String,
         @Query("count") count: Int
     ): Deferred<Response<List<CandleUpbitData>>>

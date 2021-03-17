@@ -1,13 +1,11 @@
 package com.moon.coinavenue.ui.main
 
-import android.R.attr
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
-import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -16,17 +14,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
+import androidx.core.view.marginStart
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.github.mikephil.charting.charts.CandleStickChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.CandleData
-import com.github.mikephil.charting.data.CandleDataSet
-import com.github.mikephil.charting.data.CandleEntry
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdLoader
@@ -37,7 +30,12 @@ import com.moon.coinavenue.R
 import com.moon.coinavenue.const.Const
 import com.moon.coinavenue.databinding.FragmentAvenueBinding
 import com.moon.coinavenue.network.model.CandleUpbitData
-
+import com.moon.coinavenue.network.model.DayData
+import lecho.lib.hellocharts.model.Line
+import lecho.lib.hellocharts.model.LineChartData
+import lecho.lib.hellocharts.model.PointValue
+import lecho.lib.hellocharts.model.ValueShape
+import lecho.lib.hellocharts.view.LineChartView
 
 class AvenueFragment : Fragment() {
 
@@ -50,7 +48,7 @@ class AvenueFragment : Fragment() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Const.BACK_PRESSED && userVisibleHint) {
-                    exitDialog?.show()
+                exitDialog?.show()
             }
         }
     }
@@ -123,108 +121,111 @@ class AvenueFragment : Fragment() {
         avenueViewModel = ViewModelProvider(this, viewModelFactory).get(AvenueViewModel::class.java)
 
         avenueViewModel.getMargetCode()
+        avenueViewModel.getOneMinuteData("KRW-BTC")
+        avenueViewModel.getFiveMinuteData("KRW-BTC")
+        avenueViewModel.getHalfHourData("KRW-BTC")
+        avenueViewModel.getHourData("KRW-BTC")
+        avenueViewModel.getDaysData("KRW-BTC")
+        avenueViewModel.getWeeksData("KRW-BTC")
+        avenueViewModel.getMonthsData("KRW-BTC")
+
         avenueViewModel.marketMutableLiveData.observe(viewLifecycleOwner, { list ->
             binding.recyclerview.adapter = AvenueAdapter(list)
         })
 
-        avenueViewModel.getOneMinuteData("KRW-BTC")
         avenueViewModel.oneMinuteMutableLiveData.observe(viewLifecycleOwner, { list ->
-            Log.i("MQ!", "oneMinute data list: $list")
             if (list == null) {
                 return@observe
             }
-            drawChart(list, binding.oneMinutesChart)
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.oneMinutesChart)
         })
 
-        avenueViewModel.getFiveMinuteData("KRW-BTC")
         avenueViewModel.fiveMinuteMutableLiveData.observe(viewLifecycleOwner, { list ->
-            Log.i("MQ!", "fiveMinute data list: $list")
             if (list == null) {
                 return@observe
             }
-            drawChart(list, binding.fiveMinutesChart)
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.fiveMinutesChart)
+        })
+
+        avenueViewModel.halfHourMutableLiveData.observe(viewLifecycleOwner, { list ->
+            if (list == null) {
+                return@observe
+            }
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.halfHourChart)
+        })
+
+        avenueViewModel.hourMutableLiveData.observe(viewLifecycleOwner, { list ->
+            if (list == null) {
+                return@observe
+            }
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.hourChart)
+        })
+
+        avenueViewModel.daysMutableLiveData.observe(viewLifecycleOwner, { list ->
+            if (list == null) {
+                return@observe
+            }
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.daysChart)
+        })
+
+        avenueViewModel.weeksMutableLiveData.observe(viewLifecycleOwner, { list ->
+            if (list == null) {
+                return@observe
+            }
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.weeksChart)
+        })
+
+        avenueViewModel.monthsMutableLiveData.observe(viewLifecycleOwner, { list ->
+            if (list == null) {
+                return@observe
+            }
+            val entries = ArrayList<PointValue>()
+            for (stock in list) {
+                entries.add(PointValue(stock.timestamp.toFloat(), stock.tradePrice.toFloat()))
+            }
+            drawChart(entries, binding.monthsChart)
         })
 
     }
 
-    private fun drawChart(list: MutableList<CandleUpbitData>, chart: CandleStickChart) {
-        val entries = ArrayList<CandleEntry>()
-        for (stock in list) {
-            entries.add(
-                CandleEntry(
-                    stock.timestamp.toFloat(),
-                    stock.highPrice.toFloat(),
-                    stock.lowPrice.toFloat(),
-                    stock.openingPrice.toFloat(),
-                    stock.tradePrice.toFloat()
-                )
-            )
+    private fun drawChart(entries: ArrayList<PointValue>, chart: LineChartView) {
+        val line = Line(entries).apply {
+            color = Color.DKGRAY
+            isCubic = true
+            shape = ValueShape.CIRCLE
         }
 
-        val dataSet = CandleDataSet(entries, "").apply {
-            setColor(Color.rgb(80, 80, 80));
-            setShadowColor(Color.DKGRAY);
-            setShadowWidth(0.7f);
-            setDecreasingColor(Color.RED);
-            setDecreasingPaintStyle(Paint.Style.FILL);
-            setIncreasingColor(Color.rgb(122, 242, 84));
-            setIncreasingPaintStyle(Paint.Style.STROKE);
-            setNeutralColor(Color.BLUE);
-            setValueTextColor(Color.RED);
-
-//            color = Color.rgb(80, 80, 80);
-//            shadowColor = Color.LTGRAY
-//            shadowWidth = 0.8f
-//            decreasingColor = Color.BLUE
-//            decreasingPaintStyle = Paint.Style.FILL
-//            increasingColor = Color.RED
-//            increasingPaintStyle = Paint.Style.STROKE
-//            neutralColor = Color.BLUE
-//            setDrawValues(false)
-//            setDrawIcons(false)
-
-//            axisDependency = YAxis.AxisDependency.LEFT
-//            shadowColor = Color.LTGRAY
-//            shadowWidth = 1f
-//            decreasingColor = Color.BLUE
-//            decreasingPaintStyle = Paint.Style.STROKE
-//            increasingColor = Color.RED
-//            increasingPaintStyle = Paint.Style.STROKE
-//            neutralColor = Color.DKGRAY
-        }
-
-        chart.axisLeft.run {
-            setLabelCount(7, false)
-            setDrawGridLines(false)
-        }
-        chart.axisRight.run {
-            isEnabled = false
-        }
-        chart.xAxis.run {
-            textColor = Color.TRANSPARENT
-            granularity = 1f
-            isGranularityEnabled = true
-            position = XAxis.XAxisPosition.BOTTOM
-            setDrawGridLines(false)
-            setAvoidFirstLastClipping(true)
-        }
-
-        chart.legend.run {
-            isEnabled = false
+        val data = LineChartData().apply {
+            lines = arrayListOf(line)
         }
 
         chart.run {
-            data = CandleData(dataSet)
-            isHighlightPerDragEnabled = true
-            description.isEnabled = false
+            lineChartData = data
             setBackgroundColor(Color.WHITE)
-            setPinchZoom(false)
-            setMaxVisibleValueCount(60)
-            setDrawGridBackground(false)
-            setDrawBorders(true)
-            setBorderColor(Color.LTGRAY)
-            requestDisallowInterceptTouchEvent(false)
-            invalidate()
         }
     }
 }
