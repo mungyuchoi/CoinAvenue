@@ -29,6 +29,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -63,5 +68,6 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.1.1"
 
     implementation 'com.google.android.gms:play-services-ads:19.7.0'
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
     implementation project(':nativetemplates')
 }
