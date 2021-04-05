@@ -10,10 +10,16 @@
         </Preference>
 
         <Preference
+            android:icon="@drawable/ic_money_24"
+            android:key="pref_key_donation"
+            android:title="개발자에게 기부하기" />
+
+        <Preference
                 android:defaultValue="false"
                 android:icon="@drawable/ic_baseline_info_24"
                 android:key="pref_key_version"
                 android:title="버전 정보" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

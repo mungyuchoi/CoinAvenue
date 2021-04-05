@@ -27,6 +27,8 @@ class SettingsFragment: PreferenceFragmentCompat() {
 
     private var exitDialog: Dialog? = null
 
+    private lateinit var billingManager: BillingManager
+
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Const.BACK_PRESSED && userVisibleHint) {
@@ -36,6 +38,8 @@ class SettingsFragment: PreferenceFragmentCompat() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        billingManager = BillingManager(requireContext())
 
         // Hide the divider
         setDivider(ColorDrawable(Color.TRANSPARENT))
@@ -109,6 +113,11 @@ class SettingsFragment: PreferenceFragmentCompat() {
                         )
                     )
                 }
+                true
+            }
+            getString(R.string.pref_key_donation) -> {
+                Log.i("MQ!", "donation!!")
+                billingManager.purchase("donate_1000", requireActivity())
                 true
             }
             else -> {
